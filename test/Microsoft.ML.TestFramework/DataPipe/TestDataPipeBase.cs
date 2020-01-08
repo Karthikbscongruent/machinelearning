@@ -80,13 +80,19 @@ namespace Microsoft.ML.RunTests
             var transformer = estimator.Fit(validFitInput);
             // Save and reload.
             string modelPath = GetOutputPath(FullTestName + "-model.zip");
+            Console.WriteLine($"Save model to file: {modelPath}");
+            if(validFitInput.Schema == null)
+                Console.WriteLine($"Input schema is null");
             ML.Model.Save(transformer, validFitInput.Schema, modelPath);
 
             ITransformer loadedTransformer;
             DataViewSchema loadedInputSchema;
+            Console.WriteLine($"Load model from file: {modelPath}");
             using (var fs = File.OpenRead(modelPath))
                 loadedTransformer = ML.Model.Load(fs, out loadedInputSchema);
-            DeleteOutputPath(modelPath);
+            Console.WriteLine($"Delete model file: {modelPath}");
+            //Don't delete model file for test purpose
+            //DeleteOutputPath(modelPath);
 
             // Run on train data.
             Action<IDataView> checkOnData = (IDataView data) =>

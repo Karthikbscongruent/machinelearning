@@ -153,45 +153,55 @@ namespace Microsoft.ML
         {
             _env.CheckValue(stream, nameof(stream));
 
-            using (var rep = RepositoryReader.Open(stream, _env))
+            try
             {
-                var entry = rep.OpenEntryOrNull(SchemaEntryName);
-                if (entry != null)
+                using (var rep = RepositoryReader.Open(stream, _env))
                 {
-                    var loader = new BinaryLoader(_env, new BinaryLoader.Arguments(), entry.Stream);
-                    inputSchema = loader.Schema;
-                    ModelLoadContext.LoadModel<ITransformer, SignatureLoadModel>(_env, out var transformerChain, rep,
-                        CompositeDataLoader<object, ITransformer>.TransformerDirectory);
-                    return transformerChain;
-                }
-
-                ModelLoadContext.LoadModelOrNull<IDataLoader<IMultiStreamSource>, SignatureLoadModel>(_env, out var dataLoader, rep, null);
-                if (dataLoader == null)
-                {
-                    // Try to see if the model was saved without a loader or a schema.
-                    if (ModelLoadContext.LoadModelOrNull<ITransformer, SignatureLoadModel>(_env, out var transformerChain, rep,
-                        CompositeDataLoader<object, ITransformer>.TransformerDirectory))
+                    var entry = rep.OpenEntryOrNull(SchemaEntryName);
+                    if (entry != null)
                     {
-                        inputSchema = null;
+                        var loader = new BinaryLoader(_env, new BinaryLoader.Arguments(), entry.Stream);
+                        inputSchema = loader.Schema;
+                        ModelLoadContext.LoadModel<ITransformer, SignatureLoadModel>(_env, out var transformerChain, rep,
+                            CompositeDataLoader<object, ITransformer>.TransformerDirectory);
                         return transformerChain;
                     }
 
-                    // Try to load from legacy model format.
-                    try
+                    ModelLoadContext.LoadModelOrNull<IDataLoader<IMultiStreamSource>, SignatureLoadModel>(_env, out var dataLoader, rep, null);
+                    if (dataLoader == null)
                     {
-                        var loader = ModelFileUtils.LoadLoader(_env, rep, new MultiFileSource(null), false);
-                        inputSchema = loader.Schema;
-                        return TransformerChain.LoadFromLegacy(_env, stream);
+                        // Try to see if the model was saved without a loader or a schema.
+                        if (ModelLoadContext.LoadModelOrNull<ITransformer, SignatureLoadModel>(_env, out var transformerChain, rep,
+                            CompositeDataLoader<object, ITransformer>.TransformerDirectory))
+                        {
+                            inputSchema = null;
+                            return transformerChain;
+                        }
+
+                        // Try to load from legacy model format.
+                        try
+                        {
+                            var loader = ModelFileUtils.LoadLoader(_env, rep, new MultiFileSource(null), false);
+                            inputSchema = loader.Schema;
+                            return TransformerChain.LoadFromLegacy(_env, stream);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw _env.Except(ex, "Could not load legacy format model");
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        throw _env.Except(ex, "Could not load legacy format model");
-                    }
+                    var transformer = DecomposeLoader(ref dataLoader);
+                    inputSchema = dataLoader.GetOutputSchema();
+                    return transformer;
                 }
-                var transformer = DecomposeLoader(ref dataLoader);
-                inputSchema = dataLoader.GetOutputSchema();
-                return transformer;
             }
+            catch (Exception ex)
+            {
+                inputSchema = null;
+                Console.WriteLine($"Fail to load model with exception {ex.Message}.");
+            }
+
+            return null;
         }
 
         /// <summary>

@@ -1104,13 +1104,13 @@ namespace Microsoft.ML.Transforms.TimeSeries
                 //add log to trouble shoot flaky test SsaForecast
                 if (callStack.Contains("SsaForecast"))
                 {
-                    channel.Info($"Start Consume.");
-                    channel.Info($"_rank is : {_rank}.");
+                    Console.WriteLine($"Start Consume.");
+                    Console.WriteLine($"_rank is : {_rank}.");
                     PrintQueue(channel, _buffer, "_buffer");
-                    channel.Info($"_windowSize is : {_windowSize}.");
+                    Console.WriteLine($"_windowSize is : {_windowSize}.");
                     PrintArray(channel, _state, "_state");
                     PrintArray(channel, _alpha, "_alpha");
-                    channel.Info($"_wTrans == null is : {_wTrans == null}.");
+                    Console.WriteLine($"_wTrans == null is : {_wTrans == null}.");
                 }
 
                 if (Single.IsNaN(input))
@@ -1138,7 +1138,7 @@ namespace Microsoft.ML.Transforms.TimeSeries
                     PrintVector(channel, _x, "_x");
                     PrintVector(channel, _y, "_y");
 
-                    channel.Info("In Consume, check _buffer");
+                    Console.WriteLine("In Consume, check _buffer");
                     PrintQueue(channel, _buffer, "_buffer");
                 }
 
@@ -1165,12 +1165,12 @@ namespace Microsoft.ML.Transforms.TimeSeries
 
                 if (callStack.Contains("SsaForecast"))
                 {
-                    channel.Info($"_autoregressionNoiseMean is : {_autoregressionNoiseMean}.");
-                    channel.Info($"_observationNoiseMean is : {_observationNoiseMean}.");
+                    Console.WriteLine($"_autoregressionNoiseMean is : {_autoregressionNoiseMean}.");
+                    Console.WriteLine($"_observationNoiseMean is : {_observationNoiseMean}.");
                     PrintVector(channel, _xSmooth, "_xSmooth");
                     PrintVector(channel, _x, "_x");
                     PrintVector(channel, _y, "_y");
-                    channel.Info($"_nextPrediction is : {_nextPrediction}.");
+                    Console.WriteLine($"_nextPrediction is : {_nextPrediction}.");
                 }
 
                 for (i = 0; i < _windowSize - 2; ++i)
@@ -1191,9 +1191,9 @@ namespace Microsoft.ML.Transforms.TimeSeries
 
                 if (callStack.Contains("SsaForecast"))
                 {
-                    channel.Info($"_nextPrediction is : {_nextPrediction}.");
+                    Console.WriteLine($"_nextPrediction is : {_nextPrediction}.");
                     PrintQueue(channel, _buffer, "_buffer");
-                    channel.Info($"Finish Consume.");
+                    Console.WriteLine($"Finish Consume.");
                 }
             }
         }
@@ -1295,8 +1295,8 @@ namespace Microsoft.ML.Transforms.TimeSeries
 
                 if (callStack.Contains("SsaForecast"))
                 {
-                    channel.Info($"Start TrainCore.");
-                    channel.Info($"originalSeriesLength: {originalSeriesLength}.");
+                    Console.WriteLine($"Start TrainCore.");
+                    Console.WriteLine($"originalSeriesLength: {originalSeriesLength}.");
                     PrintArray(channel, dataArray, "dataArray");
                 }
 
@@ -1469,7 +1469,7 @@ namespace Microsoft.ML.Transforms.TimeSeries
                 if (callStack.Contains("SsaForecast"))
                 {
                     PrintQueue(channel, _buffer, "_buffer");
-                    channel.Info($"Finish TrainCore.");
+                    Console.WriteLine($"Finish TrainCore.");
                 }
             }
         }
@@ -1638,38 +1638,38 @@ namespace Microsoft.ML.Transforms.TimeSeries
 
         private void PrintArray(IChannel ch, Single[] array, string name)
         {
-            ch.Info($"{name} length: {array.Length}.");
+            Console.WriteLine($"{name} length: {array.Length}.");
             string arrayItem = "";
             foreach (var item in array)
             {
                 arrayItem += item.ToString() + ";";
             }
 
-            ch.Info($"{name} items: {arrayItem}.");
+            Console.WriteLine($"{name} items: {arrayItem}.");
         }
 
         private void PrintVector(IChannel ch, CpuAlignedVector vector, string name)
         {
-            ch.Info($"{name} length: {vector.Items.Size}.");
+            Console.WriteLine($"{name} length: {vector.Items.Size}.");
             string arrayItem = "";
             for (int i = 0; i < vector.ValueCount; ++i)
             {
                 arrayItem += vector[i] + ";";
             }
 
-            ch.Info($"{name} items: {arrayItem}.");
+            Console.WriteLine($"{name} items: {arrayItem}.");
         }
 
         private void PrintQueue(IChannel ch, FixedSizeQueue<Single> queue, string name)
         {
-            ch.Info($"{name} length: {queue.Count}.");
+            Console.WriteLine($"{name} length: {queue.Count}.");
             string arrayItem = "";
             for (int i = 0; i < queue.Count; ++i)
             {
                 arrayItem += queue[i] + ";";
             }
 
-            ch.Info($"{name} items: {arrayItem}.");
+            Console.WriteLine($"{name} items: {arrayItem}.");
         }
     }
 }
