@@ -510,6 +510,8 @@ namespace Microsoft.ML.TensorFlow
                         Console.WriteLine($"Catch unhandled exception of Tensorflow run");
                         var callStack = new StackTrace().ToString();
                         Console.WriteLine($"Call stack is {callStack}");
+
+                        throw;
                     }
                 }
 
