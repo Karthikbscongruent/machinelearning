@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -493,13 +493,24 @@ namespace Microsoft.ML.TensorFlow
                 catch (TensorflowException exception)
                 {
                     Console.WriteLine($"Catch Tensorflow exception: {exception.Message} with TF code: {_status.Code}");
+                    var callStack = new StackTrace().ToString();
+                    Console.WriteLine($"Call stack is {callStack}");
                 }
 
                 unsafe
                 {
-                    c_api.TF_SessionRun(_session, null, _inputs, _inputValues,
-                         _inputs.Length, _outputs, _outputValues, _outputValues.Length, _operations,
-                        _operations.Length, IntPtr.Zero, _status);
+                    try
+                    {
+                        c_api.TF_SessionRun(_session, null, _inputs, _inputValues,
+                             _inputs.Length, _outputs, _outputValues, _outputValues.Length, _operations,
+                            _operations.Length, IntPtr.Zero, _status);
+                    }
+                    catch
+                    {
+                        Console.WriteLine($"Catch unhandled exception of Tensorflow run");
+                        var callStack = new StackTrace().ToString();
+                        Console.WriteLine($"Call stack is {callStack}");
+                    }
                 }
 
                 _status.Check(true);

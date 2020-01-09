@@ -92,7 +92,7 @@ namespace Microsoft.ML.RunTests
                 loadedTransformer = ML.Model.Load(fs, out loadedInputSchema);
             Console.WriteLine($"Delete model file: {modelPath}");
             //Don't delete model file for test purpose
-            //DeleteOutputPath(modelPath);
+            DeleteOutputPath(modelPath);
 
             // Run on train data.
             Action<IDataView> checkOnData = (IDataView data) =>
