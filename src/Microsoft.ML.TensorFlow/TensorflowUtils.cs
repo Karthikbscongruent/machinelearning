@@ -505,24 +505,24 @@ namespace Microsoft.ML.TensorFlow
                              _inputs.Length, _outputs, _outputValues, _outputValues.Length, _operations,
                             _operations.Length, IntPtr.Zero, _status);
                     }
-                    catch(Win32Exception ex)
+                    catch(Exception ex)
                     {
-                        Console.WriteLine($"Catch Win32Exception of Tensorflow run with message: {ex.Message}, " +
-                            $"with NativeErrorCode: {ex.NativeErrorCode}, with Code: {ex.ErrorCode}, with HResult: {ex.HResult}," +
+                        Console.WriteLine($"Catch Exception of Tensorflow run with message: {ex.Message}, " +
+                            $"with Source: {ex.Source}, with StackTrace: {ex.StackTrace}, with HResult: {ex.HResult}," +
                             $"with InnerException:{ex.InnerException}");
                         var callStack = new StackTrace().ToString();
                         Console.WriteLine($"Call stack is {callStack}");
 
                         throw;
                     }
-                    catch
-                    {
-                        Console.WriteLine($"Catch unhandled exception of Tensorflow run");
-                        var callStack = new StackTrace().ToString();
-                        Console.WriteLine($"Call stack is {callStack}");
+                    //catch
+                    //{
+                    //    Console.WriteLine($"Catch unhandled exception of Tensorflow run");
+                    //    var callStack = new StackTrace().ToString();
+                    //    Console.WriteLine($"Call stack is {callStack}");
 
-                        throw;
-                    }
+                    //    throw;
+                    //}
                 }
 
                 _status.Check(true);

@@ -1467,11 +1467,9 @@ namespace Microsoft.ML.Scenarios
             TensorFlowImageClassificationWithLRScheduling(new ExponentialLRDecay(), 50);
         }
 
-        [Theory]
-        [IterationData(iterations: 100)]
-        public void TensorFlowImageClassificationWithPolynomialLRScheduling(int iteration)
+        [Fact]
+        public void TensorFlowImageClassificationWithPolynomialLRScheduling()
         {
-            Console.WriteLine($"{iteration}-th running...");
             TensorFlowImageClassificationWithLRScheduling(new PolynomialLRDecay(), 50);
         }
 
