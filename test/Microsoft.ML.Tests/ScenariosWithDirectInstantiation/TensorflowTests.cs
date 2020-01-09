@@ -1467,7 +1467,7 @@ namespace Microsoft.ML.Scenarios
             TensorFlowImageClassificationWithLRScheduling(new ExponentialLRDecay(), 50);
         }
 
-        [Fact]
+        [TensorFlowFact]
         public void TensorFlowImageClassificationWithPolynomialLRScheduling()
         {
             TensorFlowImageClassificationWithLRScheduling(new PolynomialLRDecay(), 50);
